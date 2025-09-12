@@ -5,6 +5,21 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Home Assistant (skip aioskybellgen)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "homeassistant",
+      "justMyCode": false,
+      "args": [
+        "--debug",
+        "-c",
+        "config",
+        "--skip-pip-packages",
+        "aioskybellgen",
+      ],
+      "preLaunchTask": "Compile English translations"
+    },
+    {
       "name": "Home Assistant",
       "type": "debugpy",
       "request": "launch",
