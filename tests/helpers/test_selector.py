@@ -383,7 +383,7 @@ def test_entity_selector_schema_error(schema) -> None:
             (None,),
         ),
         (
-            {"multiple": True},
+            {"multiple": True, "reorder": True},
             ((["abc123", "def456"],)),
             (None, "abc123", ["abc123", None]),
         ),
@@ -485,6 +485,15 @@ def test_number_selector_schema_error(schema) -> None:
 def test_addon_selector_schema(schema, valid_selections, invalid_selections) -> None:
     """Test add-on selector."""
     _test_selector("addon", schema, valid_selections, invalid_selections)
+
+
+@pytest.mark.parametrize(
+    ("schema", "valid_selections", "invalid_selections"),
+    [({}, ("abc123",), (None,))],
+)
+def test_app_selector_schema(schema, valid_selections, invalid_selections) -> None:
+    """Test app selector."""
+    _test_selector("app", schema, valid_selections, invalid_selections)
 
 
 @pytest.mark.parametrize(
@@ -1295,21 +1304,23 @@ def test_attribute_selector_schema(
         (
             {},
             (
-                {"seconds": 10},
+                {
+                    "seconds": 10
+                },  # Seconds is allowed also if `enable_second` is not set
                 {"days": 10},  # Days is allowed also if `enable_day` is not set
                 {"milliseconds": 500},
             ),
-            (None, {}),
-        ),
-        (
-            {"enable_day": True, "enable_millisecond": True},
-            ({"seconds": 10}, {"days": 10}, {"milliseconds": 500}),
-            (None, {}),
-        ),
-        (
-            {"allow_negative": False},
-            ({"seconds": 10}, {"days": 10}),
             (None, {}, {"seconds": -1}),
+        ),
+        (
+            {"enable_day": True, "enable_millisecond": True, "enable_second": True},
+            ({"seconds": 10}, {"days": 10}, {"milliseconds": 500}),
+            (None, {}, {"seconds": -1}),
+        ),
+        (
+            {"allow_negative": True},
+            ({"seconds": 10}, {"seconds": -1}),
+            (None, {}),
         ),
     ],
 )
